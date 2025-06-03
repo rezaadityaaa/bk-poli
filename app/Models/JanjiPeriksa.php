@@ -24,7 +24,7 @@ class JanjiPeriksa extends Model
 
     public function jadwalPeriksa(): BelongsTo
     {
-        return $this->belongsTo(JadwalPeriksas::class, 'id_jadwal_periksa');
+        return $this->belongsTo(JadwalPeriksa::class, 'id_jadwal_periksa');
     }
     
     public function detailPeriksas():HasOne

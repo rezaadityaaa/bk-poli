@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Dokter;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JadwalPeriksa;
-use App\Models\JadwalPeriksas;
 use Illuminate\Support\Facades\Auth;
 
 class JadwalPeriksaController extends Controller
@@ -15,9 +14,9 @@ class JadwalPeriksaController extends Controller
      */
     public function index()
     {
-        $jadwalperiksas = JadwalPeriksas::where('id_dokter', Auth::user()->id)->get();
+        $JadwalPeriksas = JadwalPeriksa::where('id_dokter', Auth::user()->id)->get();
     
-        return view('dokter.jadwal-periksa.index');
+        return view('dokter.jadwal-periksa.index', compact('JadwalPeriksas'));
     }
 
     /**
@@ -35,12 +34,11 @@ class JadwalPeriksaController extends Controller
     {
         $request->validate([
             'hari' => 'required|string|max:255',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'status' => 'required|in:aktif,nonaktif',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
         ]);
 
-        JadwalPeriksas::create([
+        JadwalPeriksa::create([
             'id_dokter' => Auth::user()->id,
             'hari' => $request->hari,
             'jam_mulai' => $request->jam_mulai,
@@ -62,24 +60,52 @@ class JadwalPeriksaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $jadwalPeriksa = JadwalPeriksa::findOrFail($id);
+        return view('dokter.jadwal-periksa.edit', compact('jadwalPeriksa'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'hari' => 'required|string|max:255',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
+            'status' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $jadwalPeriksa = JadwalPeriksa::findOrFail($id);
+        $jadwalPeriksa->update([
+            'hari' => $request->hari,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $jadwalPeriksa = JadwalPeriksa::findOrFail($id);
+        $jadwalPeriksa->delete();
+
+        return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-deleted');
+    }
+
+    public function toggleStatus($id)
+    {
+        $jadwal = JadwalPeriksa::findOrFail($id);
+        $jadwal->status = $jadwal->status === 'aktif' ? 'nonaktif' : 'aktif';
+        $jadwal->save();
+
+        return redirect()->route('dokter.jadwal-periksa.index');
     }
 }

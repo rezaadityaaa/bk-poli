@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\JanjiPeriksa;
 use App\Models\JadwalPeriksa;
+
 use App\Models\User;
 
 class JanjiPeriksaSeeder extends Seeder
@@ -32,7 +33,7 @@ class JanjiPeriksaSeeder extends Seeder
         ];
         
         foreach ($janjis as $janji) {
-            JanjiPeriksa::create($janji);
+            JanjiPeriksa::create($janji); // BENAR
         }
 
     }

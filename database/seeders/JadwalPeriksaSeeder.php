@@ -33,7 +33,7 @@ class JadwalPeriksaSeeder extends Seeder
             ],
         ];
         foreach ($jadwalPeriksas as $jadwalPeriksa) {
-            JadwalPeriksas::create($jadwalPeriksa);
+            JadwalPeriksa::create($jadwalPeriksa);
         }
     }
 }

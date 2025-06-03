@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class JadwalPeriksas extends Model
+class JadwalPeriksa extends Model
 {
     use HasFactory;
     protected $fillable = [
