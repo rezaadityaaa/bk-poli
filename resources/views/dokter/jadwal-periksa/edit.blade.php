@@ -42,7 +42,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    {{-- <div class="mb-4">
                         <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                         <select name="status" id="status" class="mt-1 block w-full rounded border-gray-300" required>
                             <option value="aktif" {{ old('status', $jadwalPeriksa->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -51,7 +51,7 @@
                         @error('status')
                             <span class="text-red-600 text-xs">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <div class="flex justify-end">
                         <a href="{{ route('dokter.jadwal-periksa.index') }}" class="btn btn-secondary mr-2">Batal</a>

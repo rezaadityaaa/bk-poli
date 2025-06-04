@@ -103,7 +103,17 @@ class JadwalPeriksaController extends Controller
     public function toggleStatus($id)
     {
         $jadwal = JadwalPeriksa::findOrFail($id);
-        $jadwal->status = $jadwal->status === 'aktif' ? 'nonaktif' : 'aktif';
+
+        if ($jadwal->status === 'nonaktif') {
+            // Nonaktifkan semua jadwal milik dokter ini
+            JadwalPeriksa::where('id_dokter', $jadwal->id_dokter)
+                ->update(['status' => 'nonaktif']);
+            // Aktifkan jadwal yang dipilih
+            $jadwal->status = 'aktif';
+        } else {
+            // Jika sedang aktif, ubah jadi nonaktif
+            $jadwal->status = 'nonaktif';
+        }
         $jadwal->save();
 
         return redirect()->route('dokter.jadwal-periksa.index');
