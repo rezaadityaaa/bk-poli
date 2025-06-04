@@ -43,7 +43,7 @@ class JadwalPeriksaController extends Controller
             'hari' => $request->hari,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
-            'status' => $request->status,
+            'status' => 'nonaktif',
         ]);
         
         return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-created');  
@@ -75,7 +75,6 @@ class JadwalPeriksaController extends Controller
             'hari' => 'required|string|max:255',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required',
-            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         $jadwalPeriksa = JadwalPeriksa::findOrFail($id);
@@ -83,7 +82,6 @@ class JadwalPeriksaController extends Controller
             'hari' => $request->hari,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
-            'status' => $request->status,
         ]);
 
         return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-updated');
