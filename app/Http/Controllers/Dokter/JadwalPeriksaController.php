@@ -36,14 +36,20 @@ class JadwalPeriksaController extends Controller
             'hari' => 'required|string|max:255',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
+
+        if ($request->status === 'aktif') {
+            JadwalPeriksa::where('id_dokter', Auth::user()->id)
+                ->update(['status' => 'nonaktif']);
+        }
 
         JadwalPeriksa::create([
             'id_dokter' => Auth::user()->id,
             'hari' => $request->hari,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
-            'status' => 'nonaktif',
+            'status' => $request->status,
         ]);
         
         return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-created');  
