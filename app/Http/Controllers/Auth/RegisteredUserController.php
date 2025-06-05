@@ -58,6 +58,7 @@ class RegisteredUserController extends Controller
         $no_rm = $currentYearMonth . '-' . str_pad($patientCount + 1, 3, '0', STR_PAD_LEFT);
 
         $user = User::create([
+            'name' => $request->nama, // tambahkan baris ini
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
