@@ -27,9 +27,9 @@ class JanjiPeriksa extends Model
         return $this->belongsTo(JadwalPeriksa::class, 'id_jadwal_periksa');
     }
     
-    public function detailPeriksas():HasOne
+    public function periksa()
     {
-        return $this->hasOne(Periksa::class, 'id_janji_periksa');
+        return $this->hasOne(\App\Models\Periksa::class, 'id_janji_periksa');
     }    
     
 }

@@ -32,9 +32,13 @@
                                 <select class="form-control" id="dokterSelect" name="id_jadwal_periksa" required>
                                     <option>Pilih Dokter</option>
                                     @foreach ($dokters as $dokter)
-                                        @foreach ($dokter->JadwalPeriksas as $JadwalPeriksa)   
-                                            <option value="{{ $JadwalPeriksa->id }}">{{ $dokter->name }} - Spesialis {{ $dokter->poli }} | {{ $JadwalPeriksa->hari }}, {{ $JadwalPeriksa->jam_mulai }} - {{ $JadwalPeriksa->jam_selesai }}</option>
-                                        @endforeach  
+                                        @foreach ($dokter->JadwalPeriksas as $JadwalPeriksa)
+                                            @if ($JadwalPeriksa->status)
+                                                <option value="{{ $JadwalPeriksa->id }}">
+                                                    {{ $dokter->name }} - Spesialis {{ $dokter->poli }} | {{ $JadwalPeriksa->hari }}, {{ $JadwalPeriksa->jam_mulai }} - {{ $JadwalPeriksa->jam_selesai }}
+                                                </option>
+                                            @endif
+                                        @endforeach
                                     @endforeach
                                 </select>
                             </div>

@@ -14,12 +14,13 @@ class PeriksaController extends Controller
 {
     public function index()
 {
-    // Ambil semua janji periksa untuk dokter yang sedang login
+    // Hanya tampilkan janji yang BELUM ADA di tabel periksa
     $janji = JanjiPeriksa::with(['pasien', 'jadwalPeriksa'])
-        ->where('status', 'belum')
         ->whereHas('jadwalPeriksa', function ($query) {
             $query->where('id_dokter', Auth::id());
-        })->get();
+        })
+        ->whereDoesntHave('periksa')
+        ->get();
 
     return view('dokter.janji-periksa.index', compact('janji'));
 }
@@ -62,19 +63,6 @@ class PeriksaController extends Controller
             'catatan' => $validated['catatan'],
             'biaya_periksa' => $total_biaya,
         ]);
-
-        // Tandai janji sudah diperiksa
-        JanjiPeriksa::where('id', $validated['id_janji_periksa'])->update(['status' => 'sudah']);
-
-        // Simpan resep jika ada
-        if (!empty($validated['obat_ids'])) {
-            foreach ($validated['obat_ids'] as $obatId) {
-                \App\Models\DetailPeriksa::create([
-                    'id_periksa' => $periksa->id,
-                    'id_obat' => $obatId,
-                ]);
-            }
-        }
 
         return redirect()->route('dokter.janji')->with('status', 'periksa-created');
     }
