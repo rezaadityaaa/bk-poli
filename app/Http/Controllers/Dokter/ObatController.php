@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class ObatController extends Controller
 {
+
+    
     public function index()
     {
         $obats = Obat::all();

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('no_antrian');
             $table->timestamps();
         });
+        
     }
 
     /**

@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dokter\JadwalPeriksaController;
+use App\Http\Controllers\Dokter\PeriksaController;
 use App\Models\JadwalPeriksa;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Pasien\JanjiPeriksaController;
 
 
 Route::get('/', function () {
@@ -16,26 +17,38 @@ Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () 
     Route :: prefix('jadwal-periksa')->group(function () {
         Route :: get('/', [JadwalPeriksaController::class, 'index'])->name('dokter.jadwal-periksa.index');
         Route :: get('/create', [JadwalPeriksaController::class, 'create'])->name('dokter.jadwal-periksa.create');
-     
-       
 
     });
+    Route::get('janji-periksa', [PeriksaController::class, 'index'])->name('dokter.janji');
+
     Route::get('/dashboard', function () {
         return view('dokter.dashboard');
     })->name('dokter.dashboard');
+
+    // Route untuk fitur periksa
+    Route::get('/periksa/{janji}/create', [PeriksaController::class, 'create'])->name('dokter.periksa.create');
+    Route::post('/periksa', [PeriksaController::class, 'store'])->name('dokter.periksa.store');
 });
 
 Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () {
     Route::get('/dashboard', function () {
         return view('pasien.dashboard');
     })->name('pasien.dashboard');
+    
+    Route:: prefix('janjiperiksa')->group(function () {
+        Route::get('/', [JanjiPeriksaController::class, 'index'])->name('pasien.janjiperiksa.index');
+        Route::post('/', [JanjiPeriksaController::class, 'store'])->name('pasien.janjiperiksa.store');
+    });
 });
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 
 // Tambahkan route ini
 Route::patch('/dokter/jadwal-periksa/{id}/status', [JadwalPeriksaController::class, 'toggleStatus'])->name('dokter.jadwal-periksa.status');

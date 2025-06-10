@@ -62,8 +62,8 @@
                                             @method('PATCH')
                                             <button type="submit"
                                                 class="px-3 py-1 rounded text-white
-                                                    {{ $jadwalperiksa->status === 'aktif' ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 hover:bg-gray-500' }}">
-                                                {{ ucfirst($jadwalperiksa->status) }}
+                                                    {{ $jadwalperiksa->status ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 hover:bg-gray-500' }}">
+                                                {{ $jadwalperiksa->status ? 'Aktif' : 'Nonaktif' }}
                                             </button>
                                         </form>
                                     </td>

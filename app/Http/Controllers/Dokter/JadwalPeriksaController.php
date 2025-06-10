@@ -43,7 +43,7 @@ class JadwalPeriksaController extends Controller
             'hari' => $request->hari,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
-            'status' => 'nonaktif',
+            'status' => false,
         ]);
         
         return redirect()->route('dokter.jadwal-periksa.index')->with('status', 'jadwal-periksa-created');  
@@ -102,15 +102,15 @@ class JadwalPeriksaController extends Controller
     {
         $jadwal = JadwalPeriksa::findOrFail($id);
 
-        if ($jadwal->status === 'nonaktif') {
+        if (!$jadwal->status) {
             // Nonaktifkan semua jadwal milik dokter ini
             JadwalPeriksa::where('id_dokter', $jadwal->id_dokter)
-                ->update(['status' => 'nonaktif']);
+                ->update(['status' => false]);
             // Aktifkan jadwal yang dipilih
-            $jadwal->status = 'aktif';
+            $jadwal->status = true;
         } else {
             // Jika sedang aktif, ubah jadi nonaktif
-            $jadwal->status = 'nonaktif';
+            $jadwal->status = false;
         }
         $jadwal->save();
 
