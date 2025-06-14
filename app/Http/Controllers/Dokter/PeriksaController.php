@@ -15,12 +15,14 @@ class PeriksaController extends Controller
     public function index()
 {
     // Hanya tampilkan janji yang BELUM ADA di tabel periksa
-    $janji = JanjiPeriksa::with(['pasien', 'jadwalPeriksa'])
+    $janji = JanjiPeriksa::with(['pasien', 'jadwalPeriksa', 'periksa'])
         ->whereHas('jadwalPeriksa', function ($query) {
             $query->where('id_dokter', Auth::id());
         })
-        ->whereDoesntHave('periksa')
-        ->get();
+        ->get()
+        ->sortBy(function($item) {
+            return $item->periksa ? 1 : 0;
+        });
 
     return view('dokter.janji-periksa.index', compact('janji'));
 }
@@ -37,7 +39,6 @@ class PeriksaController extends Controller
 
     public function store(Request $request)
     {
-        
         $validated = $request->validate([
             'id_janji_periksa' => 'required|exists:janji_periksas,id',
             'tgl_periksa' => 'required|date',
@@ -49,15 +50,15 @@ class PeriksaController extends Controller
         // Biaya pemeriksaan tetap
         $biaya_pemeriksaan = 100000;
 
-        // Hitung total harga obat
+        // Hitung total harga obat dari checkbox yang dipilih
         $total_harga_obat = 0;
         if (!empty($validated['obat_ids'])) {
-            $total_harga_obat = \App\Models\Obat::whereIn('id', $validated['obat_ids'])->sum('harga');
+            $total_harga_obat = Obat::whereIn('id', $validated['obat_ids'])->sum('harga');
         }
 
         $total_biaya = $biaya_pemeriksaan + $total_harga_obat;
 
-        $periksa = \App\Models\Periksa::create([
+        $periksa = Periksa::create([
             'id_janji_periksa' => $validated['id_janji_periksa'],
             'tgl_periksa' => $validated['tgl_periksa'],
             'catatan' => $validated['catatan'],

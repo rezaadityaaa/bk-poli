@@ -25,7 +25,7 @@
 
                     <div class="mb-4">
                         <label class="block font-medium text-sm text-gray-700">Biaya Periksa (Rp)</label>
-                        <input type="number" name="biaya_periksa" id="biaya_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly>
+                        <input type="number" name="biaya_periksa" id="biaya_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly value="100000">
                     </div>
 
                     <div class="mb-4">
@@ -33,8 +33,8 @@
                         <div class="mt-2 space-y-2">
                             @foreach($obats as $obat)
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="obat_ids[]" value="{{ $obat->id }}" class="mr-2">
-                                    {{ $obat->nama_obat }} ({{ $obat->kemasan }})
+                                    <input type="checkbox" name="obat_ids[]" value="{{ $obat->id }}" class="mr-2 obat-checkbox" data-harga="{{ $obat->harga }}">
+                                    {{ $obat->nama_obat }} ({{ $obat->kemasan }}) - Rp {{ number_format($obat->harga, 0, ',', '.') }}
                                 </label>
                             @endforeach
                         </div>
@@ -47,4 +47,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const biayaAwal = 100000;
+            const biayaInput = document.getElementById('biaya_periksa');
+            const checkboxes = document.querySelectorAll('.obat-checkbox');
+
+            function hitungTotal() {
+                let total = biayaAwal;
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        total += parseInt(cb.getAttribute('data-harga')) || 0;
+                    }
+                });
+                biayaInput.value = total;
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', hitungTotal);
+            });
+
+            hitungTotal();
+        });
+    </script>
 </x-app-layout>

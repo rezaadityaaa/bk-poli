@@ -40,10 +40,15 @@
                                     <td class="align-middle text-start">{{ $item->keluhan }}</td>
                                     <td class="align-middle text-start">{{ $item->no_antrian }}</td>
                                     <td class="flex items-center gap-3">
-                                        {{-- Contoh aksi periksa (nanti bisa diarahkan ke form periksa) --}}
-                                        <a href="{{ route('dokter.periksa.create', $item->id) }}" class="btn btn-primary btn-sm">
-                                            Periksa
-                                        </a>
+                                        @if ($item->periksa)
+                                            <button class="btn btn-success btn-sm" disabled>
+                                                Sudah Diperiksa
+                                            </button>
+                                        @else
+                                            <a href="{{ route('dokter.periksa.create', $item->id) }}" class="btn btn-primary btn-sm">
+                                                Periksa
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
