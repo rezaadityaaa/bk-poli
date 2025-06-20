@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JanjiPeriksa;
 use Illuminate\Support\Facades\Auth;
+use App\Models\poli;
 
 class RiwayatPeriksaController extends Controller
 {
@@ -22,22 +23,24 @@ class RiwayatPeriksaController extends Controller
 
     public function riwayat($id)
     {
+        $polis = Poli::all();
         $janjiPeriksa = JanjiPeriksa::with([
             'jadwalPeriksa.dokter',
-            'periksa.detailPeriksas.obat' // <-- TAMBAHKAN INI
+            'periksa.detailPeriksas.obat' 
         ])->findOrFail($id);
         $riwayat = $janjiPeriksa->riwayatPeriksa;
 
         return view('pasien.riwayat-periksa.riwayat')->with([
             'riwayat' => $riwayat,
             'janjiPeriksa' => $janjiPeriksa,
+            'polis' => $polis,
         ]);
     }
     public function detail($id)
     {
         $janjiPeriksa = JanjiPeriksa::with([
-            'jadwalPeriksa.dokter',
-            'periksa.detailPeriksas.obat' // <-- TAMBAHKAN INI
+            'periksa.detailPeriksas.obat',
+            'jadwalPeriksa.dokter'
         ])->findOrFail($id);
 
         return view('pasien.riwayat-periksa.detail', [

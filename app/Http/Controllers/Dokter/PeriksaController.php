@@ -48,7 +48,7 @@ class PeriksaController extends Controller
         ]);
 
         // Biaya pemeriksaan tetap
-        $biaya_pemeriksaan = 100000;
+        $biaya_pemeriksaan = 150000;
 
         // Hitung total harga obat dari checkbox yang dipilih
         $total_harga_obat = 0;
@@ -58,6 +58,7 @@ class PeriksaController extends Controller
 
         $total_biaya = $biaya_pemeriksaan + $total_harga_obat;
 
+        // Create Periksa
         $periksa = Periksa::create([
             'id_janji_periksa' => $validated['id_janji_periksa'],
             'tgl_periksa' => $validated['tgl_periksa'],
@@ -65,6 +66,65 @@ class PeriksaController extends Controller
             'biaya_periksa' => $total_biaya,
         ]);
 
+        // Simpan detail obat satu per satu
+        if (!empty($validated['obat_ids'])) {
+            foreach ($validated['obat_ids'] as $obatId) {
+                \App\Models\DetailPeriksa::create([
+                    'id_periksa' => $periksa->id,
+                    'id_obat' => $obatId,
+                ]);
+            }
+        }
+
         return redirect()->route('dokter.janji')->with('status', 'periksa-created');
+    }
+    public function edit($id)
+    {
+        $periksa = Periksa::with(['detailPeriksas'])->findOrFail($id);
+        $obats = Obat::all();
+        $selectedObats = $periksa->detailPeriksas->pluck('id_obat')->toArray();
+
+        return view('dokter.janji-periksa.edit', [
+            'periksa' => $periksa,
+            'obats' => $obats,
+            'selectedObats' => $selectedObats,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'catatan' => 'required|string',
+            'obat_ids' => 'nullable|array',
+            'obat_ids.*' => 'exists:obats,id',
+        ]);
+
+        $periksa = Periksa::findOrFail($id);
+
+        // Hitung ulang biaya
+        $biaya_pemeriksaan = 150000;
+        $total_harga_obat = 0;
+        if (!empty($validated['obat_ids'])) {
+            $total_harga_obat = Obat::whereIn('id', $validated['obat_ids'])->sum('harga');
+        }
+        $total_biaya = $biaya_pemeriksaan + $total_harga_obat;
+
+        // Update periksa
+        $periksa->catatan = $validated['catatan'];
+        $periksa->biaya_periksa = $total_biaya;
+        $periksa->save();
+
+        // Update detail obat
+        $periksa->detailPeriksas()->delete();
+        if (!empty($validated['obat_ids'])) {
+            foreach ($validated['obat_ids'] as $obatId) {
+                DetailPeriksa::create([
+                    'id_periksa' => $periksa->id,
+                    'id_obat' => $obatId,
+                ]);
+            }
+        }
+
+        return redirect()->route('dokter.janji')->with('status', 'periksa-updated');
     }
 }

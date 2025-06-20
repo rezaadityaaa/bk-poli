@@ -41,9 +41,9 @@
                                     <td class="align-middle text-start">{{ $item->no_antrian }}</td>
                                     <td class="flex items-center gap-3">
                                         @if ($item->periksa)
-                                            <button class="btn btn-success btn-sm" disabled>
-                                                Sudah Diperiksa
-                                            </button>
+                                            <a href="{{ route('dokter.periksa.edit', $item->periksa->id) }}" class="btn btn-success btn-sm">
+                                                Edit
+                                            </a>
                                         @else
                                             <a href="{{ route('dokter.periksa.create', $item->id) }}" class="btn btn-primary btn-sm">
                                                 Periksa

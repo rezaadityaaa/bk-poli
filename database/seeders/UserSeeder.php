@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
                 'no_ktp' => '1234567890123456',
                 'no_hp' => '081234567890',
                 'no_rm' => null,
-                'poli' => 'Umum',
             ],
             [
                 'name' => 'user',
@@ -34,7 +33,6 @@ class UserSeeder extends Seeder
                 'no_ktp' => '6543210987654321',
                 'no_hp' => '089876543210',
                 'no_rm' => 'RM001',
-                'poli' => null,
             ],
         ];
         

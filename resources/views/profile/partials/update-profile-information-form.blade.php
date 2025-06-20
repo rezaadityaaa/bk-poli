@@ -13,9 +13,9 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="POST" action="{{ route('profile.update') }}">
         @csrf
-        @method('patch')
+        @method('PATCH')
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -46,6 +46,20 @@
                 </div>
             @endif
         </div>
+
+        @if (auth()->user()->role === 'dokter')
+            <div class="mb-4">
+                <label for="poli" class="block font-medium text-sm text-gray-700">Poli</label>
+                <select name="id_poli" id="id_poli" class="form-control" required>
+                    <option value="">Pilih Poli</option>
+                    @foreach ($polis as $poli)
+                        <option value="{{ $poli->id }}" {{ old('id_poli', auth()->user()->id_poli) == $poli->id ? 'selected' : '' }}>
+                            {{ $poli->nama_poli }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('no_ktp', 255);
             $table->string('no_hp', 50);
             $table->string('no_rm', 25)->nullable();
-            $table->string('poli', 50)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

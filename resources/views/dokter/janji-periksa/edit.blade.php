@@ -1,31 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Periksa Pasien') }}
+            {{ __('Edit Pemeriksaan Pasien') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="mx-auto space-y-6 max-w-4xl sm:px-6 lg:px-8">
             <div class="p-4 bg-white shadow-sm sm:p-8 sm:rounded-lg">
-                <form action="{{ route('dokter.periksa.store') }}" method="POST">
+                <form action="{{ route('dokter.periksa.update', $periksa->id) }}" method="POST">
                     @csrf
-
-                    <input type="hidden" name="id_janji_periksa" value="{{ $janji->id }}">
+                    @method('PATCH')
 
                     <div class="mb-4">
                         <label class="block font-medium text-sm text-gray-700">Tanggal Periksa</label>
-                        <input type="date" name="tgl_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                        <input type="date" name="tgl_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                            value="{{ old('tgl_periksa', $periksa->tgl_periksa ? \Carbon\Carbon::parse($periksa->tgl_periksa)->format('Y-m-d') : '') }}" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-medium text-sm text-gray-700">Catatan Pemeriksaan</label>
-                        <textarea name="catatan" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required></textarea>
+                        <textarea name="catatan" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>{{ old('catatan', $periksa->catatan) }}</textarea>
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-medium text-sm text-gray-700">Biaya Periksa (Rp)</label>
-                        <input type="number" name="biaya_periksa" id="biaya_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly value="150000">
+                        <input type="number" name="biaya_periksa" id="biaya_periksa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly
+                            value="{{ old('biaya_periksa', $periksa->biaya_periksa) }}">
                     </div>
 
                     <div class="mb-4">
@@ -37,7 +38,9 @@
                             <div class="dropdown-multi-content" id="dropdownContent">
                                 @foreach($obats as $obat)
                                     <label style="display:block; padding:4px 8px;">
-                                        <input type="checkbox" name="obat_ids[]" value="{{ $obat->id }}" class="obat-checkbox">
+                                        <input type="checkbox" name="obat_ids[]" value="{{ $obat->id }}"
+                                            class="obat-checkbox"
+                                            {{ in_array($obat->id, old('obat_ids', $selectedObats ?? [])) ? 'checked' : '' }}>
                                         {{ $obat->nama_obat }} ({{ $obat->kemasan }}) - Rp {{ number_format($obat->harga, 0, ',', '.') }}
                                     </label>
                                 @endforeach
@@ -47,7 +50,7 @@
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="submit" class="btn btn-primary">Simpan Pemeriksaan</button>
+                        <button type="submit" class="btn btn-primary">Update Pemeriksaan</button>
                     </div>
                 </form>
             </div>
@@ -76,23 +79,6 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const biayaAwal = 150000;
-            const biayaInput = document.getElementById('biaya_periksa');
-            const selectObat = document.getElementById('obat_ids');
-
-            function hitungTotal() {
-                let total = biayaAwal;
-                Array.from(selectObat.selectedOptions).forEach(opt => {
-                    total += parseInt(opt.getAttribute('data-harga')) || 0;
-                });
-                biayaInput.value = total;
-            }
-
-            selectObat.addEventListener('change', hitungTotal);
-            hitungTotal();
-        });
-
         document.addEventListener('DOMContentLoaded', function () {
             const dropdown = document.getElementById('dropdownMulti');
             const btn = document.getElementById('dropdownBtn');
