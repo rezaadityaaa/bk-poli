@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('poli'); // Drop the old 'poli' column if it exists
             $table->foreignId('id_poli')
                 ->nullable()
                 ->constrained('polis')
@@ -27,6 +28,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['id_poli']);
             $table->dropColumn('id_poli');
+            $table->string('poli', 50)->nullable(); // Recreate the 'poli' column
         });
     }
 };
